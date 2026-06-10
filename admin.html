@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Digiva Admin Dashboard</title>
+<link rel="stylesheet" href="digiva.css"/>
+<style>
+body{display:flex;min-height:100vh}
+/* Sidebar */
+.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;transition:transform .3s}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-logo-mark{width:36px;height:36px;background:var(--grad2);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:#fff}
+.sidebar-logo-text{font-size:18px;font-weight:800;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sidebar-role{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);background:rgba(240,180,41,.1);padding:2px 8px;border-radius:4px;margin-left:auto}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 0}
+.nav-section{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:12px 20px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;border:none;background:none;width:100%;text-align:left;color:var(--text2);font-size:13px;font-weight:500;border-radius:0;transition:all .2s;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.nav-item.active{background:rgba(46,156,255,.12);color:var(--d5);border-left:3px solid var(--d5)}
+.nav-item .ni{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:10px}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--border)}
+.admin-avatar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.avatar-circle{width:36px;height:36px;background:var(--grad2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0}
+.avatar-name{font-size:13px;font-weight:600;color:var(--text)}
+.avatar-email{font-size:11px;color:var(--text3)}
+
+/* Main content */
+.main{margin-left:240px;flex:1;min-height:100vh;display:flex;flex-direction:column}
+.topbar{height:60px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:16px;flex-shrink:0;position:sticky;top:0;z-index:40}
+.topbar-title{font-size:17px;font-weight:700;color:var(--text);margin-right:auto}
+.topbar-time{font-size:12px;color:var(--text3)}
+.content{flex:1;padding:28px;overflow-y:auto}
+
+/* Panels */
+.panel{display:none}.panel.active{display:block;animation:fadeUp .3s ease}
+
+/* Stat cards */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad2)}
+.stat-num{font-size:32px;font-weight:900;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;letter-spacing:-1px}
+.stat-lbl{font-size:12px;color:var(--text3);margin-top:5px;font-weight:500}
+.stat-change{font-size:11px;color:var(--green);margin-top:4px}
+
+/* Chart */
+.chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:28px}
+.chart-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:120px}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.chart-bar{width:100%;background:var(--grad2);border-radius:4px 4px 0 0;transition:height .5s ease;min-height:4px}
+.chart-bar-lbl{font-size:10px;color:var(--text3);font-weight:500}
+.chart-bar-val{font-size:10px;color:var(--d5);font-weight:700}
+
+/* Config sections */
+.cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.cfg-section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
+.cfg-section-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.save-btn{background:var(--grad2);color:#fff;font-size:13px;font-weight:700;padding:9px 22px;border-radius:9px;border:none;cursor:pointer;transition:opacity .2s;margin-top:12px}
+.save-btn:hover{opacity:.85}
+.save-status{font-size:11px;color:var(--green);margin-left:12px;opacity:0;transition:opacity .3s}
+.save-status.show{opacity:1}
+
+/* Users table */
+.user-actions{display:flex;gap:6px}
+.action-btn{padding:4px 10px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+.action-view{background:rgba(46,156,255,.12);color:var(--d5)}
+.action-edit{background:rgba(240,180,41,.12);color:var(--gold)}
+.action-del{background:rgba(239,68,68,.12);color:var(--red)}
+
+/* Messages */
+.msg-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.msg-item:hover{border-color:var(--d5)}
+.msg-item.unread{border-left:3px solid var(--d5)}
+.msg-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.msg-from{font-size:14px;font-weight:700;color:var(--text)}
+.msg-time{font-size:11px;color:var(--text3);margin-left:auto}
+.msg-subject{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:4px}
+.msg-preview{font-size:12px;color:var(--text3)}
+
+/* Promo editor */
+.promo-row{display:grid;grid-template-columns:1fr 80px 80px 36px;gap:8px;align-items:center;margin-bottom:8px}
+.promo-inp{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;background:var(--bg);color:var(--text);outline:none;font-family:monospace;width:100%}
+.promo-inp:focus{border-color:var(--d5)}
+.del-btn{width:32px;height:32px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:var(--red);border-radius:7px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+
+/* Color picker section */
+.color-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.color-item{display:flex;flex-direction:column;gap:6px}
+.color-lbl{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3)}
+.color-row{display:flex;gap:8px;align-items:center}
+.color-pick{width:36px;height:36px;border-radius:8px;border:2px solid var(--border);cursor:pointer;padding:2px;background:transparent}
+.color-hex{flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-family:monospace;background:var(--bg);color:var(--text);outline:none}
+.color-hex:focus{border-color:var(--d5)}
+
+/* Download row */
+.download-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.dl-btn{padding:9px 18px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;display:flex;align-items:center;gap:6px}
+.dl-pdf{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)!important}
+.dl-xl{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.3)!important}
+.dl-word{background:rgba(46,156,255,.12);color:var(--d5);border:1px solid rgba(46,156,255,.3)!important}
+
+/* Floating cursor bubble */
+#cursorBubble{position:fixed;width:28px;height:28px;border-radius:50%;background:rgba(46,156,255,.2);border:1.5px solid rgba(46,156,255,.4);pointer-events:none;z-index:99998;transition:left .08s ease,top .08s ease;transform:translate(-50%,-50%)}
+
+/* Background canvas */
+#bgParticles{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4}
+.main,.sidebar{position:relative;z-index:1}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .main{margin-left:0}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<canvas id="bgParticles"></canvas>
+<div id="cursorBubble"></div>
+<div id="toast-container"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-mark">D</div>
+    <div class="sidebar-logo-text">Digiva</div>
+    <span class="sidebar-role">ADMIN</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item active" onclick="showPanel('stats')"><span class="ni">📊</span> Statistics</a>
+    <a class="nav-item" onclick="showPanel('messages')"><span class="ni">💬</span> Messages <span class="nav-badge" id="unread-badge">0</span></a>
+
+    <div class="nav-section">Management</div>
+    <a class="nav-item" onclick="showPanel('users')"><span class="ni">👥</span> Users</a>
+    <a class="nav-item" onclick="showPanel('workers')"><span class="ni">🔑</span> Workers</a>
+    <a class="nav-item" onclick="showPanel('promo')"><span class="ni">🎟</span> Promo Codes</a>
+
+    <div class="nav-section">Site Settings</div>
+    <a class="nav-item" onclick="showPanel('general')"><span class="ni">🏠</span> General</a>
+    <a class="nav-item" onclick="showPanel('pricing')"><span class="ni">💰</span> Pricing & Payments</a>
+    <a class="nav-item" onclick="showPanel('apikeys')"><span class="ni">🔑</span> API Keys</a>
+    <a class="nav-item" onclick="showPanel('design')"><span class="ni">🎨</span> Design & Colors</a>
+    <a class="nav-item" onclick="showPanel('social')"><span class="ni">📱</span> Social Links</a>
+    <a class="nav-item" onclick="showPanel('content')"><span class="ni">📝</span> Content</a>
+
+    <div class="nav-section">Pages</div>
+    <a class="nav-item" href="index.html" target="_blank"><span class="ni">🌐</span> View Live Site</a>
+    <a class="nav-item" href="privacy.html" target="_blank"><span class="ni">📄</span> Privacy Policy</a>
+    <a class="nav-item" href="terms.html" target="_blank"><span class="ni">📋</span> Terms of Service</a>
+    <a class="nav-item" href="about.html" target="_blank"><span class="ni">ℹ️</span> About Digiva</a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="admin-avatar">
+      <div class="avatar-circle">K</div>
+      <div>
+        <div class="avatar-name">Khalil Benzekri</div>
+        <div class="avatar-email">benzekri1khalil@gmail.com</div>
+      </div>
+    </div>
+    <button class="btn btn-secondary btn-sm btn-full" onclick="logout()">🚪 Sign Out</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="panel-title">📊 Statistics</div>
+    <div class="topbar-time" id="topbar-time"></div>
+    <button class="btn btn-secondary btn-sm" onclick="location.reload()">🔄 Refresh</button>
+  </div>
+
+  <div class="content">
+
+    <!-- STATS PANEL -->
+    <div class="panel active" id="panel-stats">
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="chart-wrap">
+        <div class="chart-title">
+          Generations — Last 7 Days
+          <div class="download-row" style="margin:0">
+            <button class="dl-btn dl-pdf" onclick="downloadStats('pdf')">📄 PDF</button>
+            <button class="dl-btn dl-xl" onclick="downloadStats('excel')">📊 Excel</button>
+            <button class="dl-btn dl-word" onclick="downloadStats('word')">📝 Word</button>
+          </div>
+        </div>
+        <div class="chart-bars" id="chartBars"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="chart-wrap" style="margin:0">
+          <div class="chart-title">Top Categories</div>
+          <div id="categoryList"></div>
+        </div>
+        <div class="chart-wrap" style="margin:0">
+          <div class="chart-title">Recent Registrations</div>
+          <div id="recentUsers"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSAGES PANEL -->
+    <div class="panel" id="panel-messages">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div class="sec-h" style="font-size:20px">Messages</div>
+          <div style="font-size:13px;color:var(--text3)">Support messages from users</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <label class="inp-label" style="margin:0">Notification Email:</label>
+          <input class="inp" id="notif-email" style="width:240px" placeholder="benzekri1khalil@gmail.com"/>
+          <button class="save-btn" style="margin:0" onclick="saveNotifEmail()">Save</button>
+        </div>
+      </div>
+      <div id="msgList"></div>
+    </div>
+
+    <!-- USERS PANEL -->
+    <div class="panel" id="panel-users">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div><div class="sec-h" style="font-size:20px">Registered Users</div></div>
+        <input class="inp" id="user-search" style="width:260px" placeholder="Search by name or email..." oninput="renderUsers()"/>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Email</th><th>Credits</th><th>Generations</th><th>Registered</th><th>Actions</th></tr></thead>
+          <tbody id="usersTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- WORKERS PANEL -->
+    <div class="panel" id="panel-workers">
+      <div class="sec-h" style="font-size:20px;margin-bottom:20px">Worker Accounts</div>
+      <div class="card" style="max-width:540px">
+        <div class="cfg-section-title">➕ Create Worker Account</div>
+        <div class="inp-group"><label class="inp-label">Worker Name</label><input class="inp" id="w-name" placeholder="Worker name"/></div>
+        <div class="inp-group"><label class="inp-label">Worker Email</label><input class="inp" id="w-email" type="email" placeholder="worker@email.com"/></div>
+        <div class="inp-group">
+          <label class="inp-label">Access Level</label>
+          <select class="inp" id="w-access">
+            <option value="messages">Messages only</option>
+            <option value="users">Messages + Users (read only)</option>
+          </select>
+        </div>
+        <button class="save-btn" onclick="createWorker()">Create Worker Account</button>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px">Worker password: <code style="background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--d5)">digiva-worker-2025</code></div>
+      </div>
+      <div style="margin-top:24px" id="workersList"></div>
+    </div>
+
+    <!-- PROMO CODES PANEL -->
+    <div class="panel" id="panel-promo">
+      <div class="sec-h" style="font-size:20px;margin-bottom:20px">Promo Codes</div>
+      <div class="card" style="max-width:600px">
+        <div style="display:grid;grid-template-columns:1fr 80px 80px 36px;gap:8px;margin-bottom:10px">
+          <span style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3)">Code</span>
+          <span style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3)">Credits</span>
+          <span style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3)">Status</span>
+          <span></span>
+        </div>
+        <div id="promoRows"></div>
+        <button class="btn btn-secondary btn-sm" style="margin-top:10px;width:100%" onclick="addPromoRow()">+ Add Code</button>
+        <button class="save-btn" onclick="savePromos()">💾 Save Promo Codes</button>
+        <div class="save-status" id="promo-status">✓ Saved!</div>
+      </div>
+    </div>
+
+    <!-- GENERAL SETTINGS -->
+    <div class="panel" id="panel-general">
+      <div class="sec-h" style="font-size:20px;margin-bottom:20px">General Settings</div>
+      <div class="cfg-grid">
+        <div class="cfg-section">
+          <div class="cfg-section-title">🏠 Site Info</div>
+          <div class="inp-group"><label class="inp-label">Site Name</label><input class="inp" id="g-sitename"/></div>
+          <div class="inp-group"><label class="inp-label">Tagline</label><input class="inp" id="g-tagline"/></div>
+          <div class="inp-group"><label class="inp-label">Contact Email</label><input class="inp" id="g-email" type="email"/></div>
+          <div class="inp-group"><label class="inp-label">Free Credits for New Users</label><input class="inp" id="g-freecreds" type="number" min="0" max="100"/></div>
+          <button class="save-btn" onclick="saveSection('general')">💾 Save</button>
+          <span class="save-status" id="status-general">✓ Saved!</span>
+        </div>
+        <div class="cfg-section">
+          <div class="cfg-section-title">📢 Hero Section</div>
+          <div class="inp-group"><label class="inp-label">Hero Title</label><input class="inp" id="g-herotitle"/></div>
+          <div class="inp-group"><label class="inp-label">Hero Subtitle</label><textarea class="inp" id="g-herosub" rows="3" style="resize:vertical"></textarea></div>
+          <div class="inp-group"><label class="inp-label">CTA Button Text</label><input class="inp" id="g-ctabtn"/></div>
+          <div class="inp-group"><label class="inp-label">Footer Copyright Text</label><input class="inp" id="g-footer"/></div>
+          <button class="save-btn" onclick="saveSection('hero')">💾 Save</button>
+          <span class="save-status" id="status-hero">✓ Saved!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICING PANEL -->
+    <div class="panel" id="panel-pricing">
+      <div class="sec-h" style="font-size:20px;margin-bottom:20px">Pricing & Payments</div>
+      <div id="planEditor"></div>
+      <div class="cfg-section" style="margin-top:20px;max-width:600px">
+        <div class="cfg-section-title">💳 Payment Gateways</div>
+        <div class="inp-group"><label class="inp-label">Gumroad / Lemon Squeezy Starter Link</label><input class="inp" id="pay-s" placeholder="https://..."/></div>
+        <div class="inp-group"><label class="inp-label">Gumroad / Lemon Squeezy Pro Link</label><input class="inp" id="pay-p" placeholder="https://..."/></div>
+        <div class="inp-group"><label class="inp-label">Gumroad / Lemon Squeezy Business Link</label><input class="inp" id="pay-b" placeholder="https://..."/></div>
+        <button class="save-btn" onclick="savePayment()">💾 Save Payment Links</button>
+        <span class="save-status" id="status-payment">✓ Saved!</span>
+      </div>
+    </div>
+
+    <!-- API KEYS PANEL -->
+    <div class="panel" id="panel-apikeys">
+      <div class="sec-h" style="font-size:20px;margin-bottom:20px">API Keys</div>
+      <div class="cfg-section" style="max-width:600px">
+        <div class="cfg-section-title">🤖 OpenAI API Key</div>
+        <div class="inp-group">
+          <label class="inp-label">API Key</label>
+          <div style="display:flex;gap:10px">
+            <input class="inp" id="api-key-inp" type="password" placeholder="sk-proj-..."/>
+            <button class="save-btn" style="margin:0;white-space:nowrap" onclick="toggleApiVis()">👁 Show</button>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.7;margin-bottom:12px">
+          This key is used for all datasheet generations. It is stored in the browser and never sent anywhere except OpenAI.<br/>
+          Get your key at <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--d5)">platform.openai.com/api-keys</a>
+        </div>
+        <div class="inp-group">
+          <label class="inp-label">Model</label>
+          <select class="inp" id="api-model">
+            <option value="gpt-4o">GPT-4o (Best quality)</option>
+            <option value="gpt-4o-mini">GPT-4o Mini (Faster, cheaper)</option>
+            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+          </select>
+        </div>
+        <button class="save-btn" onclick="saveApiKey()">💾 Save API Key</button>
+        <span class="save-status" id="status-api">✓ Saved!</span>
+      </div>
+    </div>
+
+    <!-- DESIGN PANEL -->
+    <div class="panel" id="panel-design">
+      <div class="sec-h" style="font-size:20px;margin-bottom:20px">Design & Colors</div>
+      <div class="cfg-grid">
+        <div class="cfg-section">
+          <div class="cfg-section-title">🎨 Brand Colors</div>
+          <div class="color-grid" id="colorEditor"></div>
+          <button class="save-btn" onclick="saveColors()">💾 Apply Colors</button>
+          <span class="save-status" id="status-colors">✓ Applied!</span>
+        </div>
+        <div class="cfg-section">
+          <div class="cfg-section-title">🖼️ Logo & Images</div>
+          <div class="inp-group">
+            <label class="inp-label">Site Logo (PNG/SVG)</label>
+            <div id="logo-drop" onclick="document.getElementById('logo-file').click()" style="border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;color:var(--text3);font-size:13px;transition:all .2s" onmouseover="this.style.borderColor='var(--d5)'" onmouseout="this.style.borderColor='var(--border)'">📁 Click to upload logo</div>
+            <input type="file" id="logo-file" accept="image/*" style="display:none" onchange="handleLogoUpload(event)"/>
+          </div>
+          <div id="logo-preview" style="margin-top:8px;display:none">
+            <img id="logo-img" style="max-height:60px;border-radius:8px;border:1px solid var(--border);padding:8px;background:var(--bg)"/>
+          </div>
+          <div class="inp-group" style="margin-top:16px">
+            <label class="inp-label">Background Style</label>
+            <select class="inp" id="bg-style">
+              <option value="dark">Dark (Blue to Black)</option>
+              <option value="light">Light (White to Blue)</option>
+              <option value="gradient">Full Gradient</option>
+            </select>
+          </div>
+          <button class="save-btn" onclick="saveBranding()">💾 Save Branding</button>
+          <span class="save-status" id="status-brand">✓ Saved!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOCIAL PANEL -->
+    <div class="panel" id="panel-social">
+      <div class="sec-h" style="font-size:20px;margin-bottom:20px">Social Links</div>
+      <div class="cfg-section" style="max-width:560px">
+        <div class="cfg-section-title">📱 Social Media</div>
+        <div class="inp-group"><label class="inp-label">💼 LinkedIn URL</label><input class="inp" id="s-li" placeholder="https://linkedin.com/in/yourprofile"/></div>
+        <div class="inp-group"><label class="inp-label">📸 Instagram URL</label><input class="inp" id="s-ig" placeholder="https://instagram.com/yourhandle"/></div>
+        <div class="inp-group"><label class="inp-label">🎵 TikTok URL</label><input class="inp" id="s-tt" placeholder="https://tiktok.com/@yourhandle"/></div>
+        <div class="inp-group"><label class="inp-label">📘 Facebook URL</label><input class="inp" id="s-fb" placeholder="https://facebook.com/yourpage"/></div>
+        <div class="inp-group"><label class="inp-label">🐦 Twitter/X URL</label><input class="inp" id="s-tw" placeholder="https://x.com/yourhandle"/></div>
+        <div class="inp-group"><label class="inp-label">📺 YouTube URL</label><input class="inp" id="s-yt" placeholder="https://youtube.com/@yourchannel"/></div>
+        <button class="save-btn" onclick="saveSocial()">💾 Save Social Links</button>
+        <span class="save-status" id="status-social">✓ Saved!</span>
+      </div>
+    </div>
+
+    <!-- CONTENT PANEL -->
+    <div class="panel" id="panel-content">
+      <div class="sec-h" style="font-size:20px;margin-bottom:20px">Content Editor</div>
+      <div class="cfg-grid">
+        <div class="cfg-section">
+          <div class="cfg-section-title">🃏 Feature Cards</div>
+          <div id="featCards"></div>
+        </div>
+        <div class="cfg-section">
+          <div class="cfg-section-title">📊 Pricing Plan Features</div>
+          <div id="planFeats"></div>
+        </div>
+      </div>
+      <button class="save-btn" onclick="saveContent()" style="margin-top:16px">💾 Save All Content</button>
+      <span class="save-status" id="status-content">✓ Saved!</span>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script src="digiva-core.js"></script>
+<script>
+requireAdmin();
+
+/* ── Live clock ── */
+setInterval(()=>{
+  const now=new Date();
+  document.getElementById('topbar-time').textContent=now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+' · '+now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+},1000);
+
+/* ── Background particles ── */
+(function(){
+  const c=document.getElementById('bgParticles');
+  const ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<25;i++) pts.push({x:Math.random()*1200,y:Math.random()*900,r:1+Math.random()*3,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,a:0.3+Math.random()*.5});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(46,156,255,${p.a})`;ctx.fill();
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── Cursor bubble ── */
+const bubble=document.getElementById('cursorBubble');
+document.addEventListener('mousemove',e=>{bubble.style.left=e.clientX+'px';bubble.style.top=e.clientY+'px';});
+
+/* ── Panel switcher ── */
+const PANEL_TITLES={'stats':'📊 Statistics','messages':'💬 Messages','users':'👥 Users','workers':'🔑 Workers','promo':'🎟 Promo Codes','general':'🏠 General Settings','pricing':'💰 Pricing & Payments','apikeys':'🔑 API Keys','design':'🎨 Design & Colors','social':'📱 Social Links','content':'📝 Content'};
+function showPanel(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  document.getElementById('panel-title').textContent=PANEL_TITLES[name]||name;
+  if(name==='stats') renderStats();
+  if(name==='messages') renderMessages();
+  if(name==='users') renderUsers();
+  if(name==='workers') renderWorkers();
+  if(name==='promo') renderPromos();
+  if(name==='general') loadGeneral();
+  if(name==='pricing') loadPricing();
+  if(name==='apikeys') loadApiKeys();
+  if(name==='design') loadDesign();
+  if(name==='social') loadSocial();
+  if(name==='content') loadContent();
+}
+
+/* ══ STATS ══ */
+function renderStats(){
+  const stats=getStats();
+  document.getElementById('unread-badge').textContent=stats.unreadMsgs||'';
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${stats.totalUsers}</div><div class="stat-lbl">Registered Users</div><div class="stat-change">↑ All time</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.totalGen}</div><div class="stat-lbl">Total Generations</div><div class="stat-change">↑ All time</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.todayGen}</div><div class="stat-lbl">Today's Generations</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.unreadMsgs}</div><div class="stat-lbl">Unread Messages</div></div>`;
+  // Chart
+  const days=stats.byDay;
+  const max=Math.max(...days.map(d=>d.count),1);
+  document.getElementById('chartBars').innerHTML=days.map(d=>`
+    <div class="chart-bar-wrap">
+      <div class="chart-bar-val">${d.count}</div>
+      <div class="chart-bar" style="height:${Math.max(4,(d.count/max)*100)}px"></div>
+      <div class="chart-bar-lbl">${d.label}</div>
+    </div>`).join('');
+  // Categories
+  const cats=stats.byCategory;
+  document.getElementById('categoryList').innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1;font-size:13px;color:var(--text2)">${k}</div>
+      <div style="font-size:13px;font-weight:700;color:var(--d5)">${v}</div>
+    </div>`).join('')||'<div style="color:var(--text3);font-size:13px;padding:12px 0">No data yet</div>';
+  // Recent users
+  const users=getUsers().slice(-5).reverse();
+  document.getElementById('recentUsers').innerHTML=users.map(u=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="width:30px;height:30px;background:var(--grad2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0">${u.name?u.name[0].toUpperCase():'?'}</div>
+      <div style="flex:1"><div style="font-size:13px;color:var(--text)">${u.name}</div><div style="font-size:11px;color:var(--text3)">${u.email}</div></div>
+      <div style="font-size:11px;color:var(--text3)">${new Date(u.createdAt).toLocaleDateString()}</div>
+    </div>`).join('')||'<div style="color:var(--text3);font-size:13px;padding:12px 0">No users yet</div>';
+}
+
+function downloadStats(type){
+  const stats=getStats();
+  const lines=[`Digiva Statistics Report — ${new Date().toLocaleDateString()}`,`Total Users: ${stats.totalUsers}`,`Total Generations: ${stats.totalGen}`,`Today's Generations: ${stats.todayGen}`,`Unread Messages: ${stats.unreadMsgs}`,``,`Daily Activity (Last 7 Days):`,...stats.byDay.map(d=>`${d.label}: ${d.count} generations`),``,`Top Categories:`,...Object.entries(stats.byCategory).map(([k,v])=>`${k}: ${v}`)];
+  const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`digiva-stats-${Date.now()}.${type==='excel'?'csv':type==='word'?'txt':'txt'}`;a.click();
+  showToast('Stats downloaded as '+type.toUpperCase(),'ok');
+}
+
+/* ══ MESSAGES ══ */
+function renderMessages(){
+  const msgs=getMessages();
+  const cfg=getCfg();
+  document.getElementById('notif-email').value=cfg.notifEmail||'benzekri1khalil@gmail.com';
+  if(!msgs.length){document.getElementById('msgList').innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">No messages yet</div>';return;}
+  document.getElementById('msgList').innerHTML=msgs.map(m=>`
+    <div class="msg-item ${m.read?'':'unread'}" onclick="readMsg('${m.id}')">
+      <div class="msg-header">
+        <div class="msg-from">${m.from||'Anonymous'}</div>
+        <div style="font-size:11px;color:var(--text3)">${m.email||''}</div>
+        ${!m.read?'<span class="badge badge-blue">NEW</span>':''}
+        <div class="msg-time">${new Date(m.time).toLocaleString()}</div>
+      </div>
+      <div class="msg-subject">${m.subject||'(no subject)'}</div>
+      <div class="msg-preview">${(m.body||'').slice(0,120)}${m.body&&m.body.length>120?'...':''}</div>
+    </div>`).join('');
+}
+function readMsg(id){markRead(id);renderMessages();}
+function saveNotifEmail(){
+  const email=document.getElementById('notif-email').value.trim();
+  saveCfg({notifEmail:email});
+  showToast('Notification email saved ✓','ok');
+}
+
+/* ══ USERS ══ */
+function renderUsers(){
+  const q=(document.getElementById('user-search')?.value||'').toLowerCase();
+  const users=getUsers().filter(u=>!q||(u.name||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q));
+  document.getElementById('usersTable').innerHTML=users.length?users.map(u=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;background:var(--grad2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff">${(u.name||'?')[0].toUpperCase()}</div>${u.name||'—'}</div></td>
+      <td style="color:var(--text3)">${u.email}</td>
+      <td><span class="badge badge-blue">${u.credits||0}</span></td>
+      <td>${(u.history||[]).length}</td>
+      <td style="font-size:12px;color:var(--text3)">${new Date(u.createdAt).toLocaleDateString()}</td>
+      <td><div class="user-actions"><button class="action-btn action-edit" onclick="editUserCredits('${u.id}')">Credits</button><button class="action-btn action-del" onclick="deleteUser('${u.id}')">Delete</button></div></td>
+    </tr>`).join(''):'<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3)">No users found</td></tr>';
+}
+function editUserCredits(id){
+  const n=prompt('New credit balance for this user:');
+  if(n===null||isNaN(n)) return;
+  updateUser(id,{credits:parseInt(n)});
+  renderUsers();
+  showToast('Credits updated ✓','ok');
+}
+function deleteUser(id){
+  if(!confirm('Delete this user? This cannot be undone.')) return;
+  const users=getUsers().filter(u=>u.id!==id);
+  saveUsers(users);
+  renderUsers();
+  showToast('User deleted','ok');
+}
+
+/* ══ WORKERS ══ */
+function renderWorkers(){
+  const workers=getUsers().filter(u=>u.role==='worker');
+  document.getElementById('workersList').innerHTML=workers.length?`<div class="card" style="padding:0;overflow:hidden;max-width:600px"><table class="data-table"><thead><tr><th>Name</th><th>Email</th><th>Access</th><th>Actions</th></tr></thead><tbody>${workers.map(w=>`<tr><td>${w.name}</td><td style="color:var(--text3)">${w.email}</td><td><span class="badge badge-gold">${w.access||'messages'}</span></td><td><button class="action-btn action-del" onclick="deleteUser('${w.id}')">Remove</button></td></tr>`).join('')}</tbody></table></div>`:'<div style="color:var(--text3);font-size:13px">No workers yet</div>';
+}
+function createWorker(){
+  const name=document.getElementById('w-name').value.trim();
+  const email=document.getElementById('w-email').value.trim();
+  const access=document.getElementById('w-access').value;
+  if(!name||!email){showToast('Fill in name and email','err');return;}
+  const result=registerUser(name,email,'worker_temp_'+Date.now());
+  if(!result.ok){showToast(result.msg,'err');return;}
+  updateUser(result.user.id,{role:'worker',access,passwordHash:simpleHash('digiva-worker-2025')});
+  renderWorkers();
+  showToast('Worker account created ✓','ok');
+}
+
+/* ══ PROMO CODES ══ */
+function renderPromos(){
+  const cfg=getCfg();
+  const promos=cfg.promoCodes||{};
+  document.getElementById('promoRows').innerHTML=Object.entries(promos).map(([code,creds])=>`
+    <div class="promo-row">
+      <input class="promo-inp" value="${code}" placeholder="CODE" style="text-transform:uppercase"/>
+      <input class="promo-inp" type="number" value="${creds}" min="1"/>
+      <select class="promo-inp"><option value="1">✅ On</option></select>
+      <button class="del-btn" onclick="this.parentElement.remove()">×</button>
+    </div>`).join('');
+}
+function addPromoRow(){
+  const wrap=document.getElementById('promoRows');
+  const row=document.createElement('div');
+  row.className='promo-row';
+  row.innerHTML='<input class="promo-inp" placeholder="MYCODE" style="text-transform:uppercase"/><input class="promo-inp" type="number" value="10" min="1"/><select class="promo-inp"><option value="1">✅ On</option><option value="0">❌ Off</option></select><button class="del-btn" onclick="this.parentElement.remove()">×</button>';
+  wrap.appendChild(row);
+}
+function savePromos(){
+  const rows=document.querySelectorAll('#promoRows .promo-row');
+  const promos={};
+  rows.forEach(r=>{
+    const inputs=r.querySelectorAll('input');
+    const sel=r.querySelector('select');
+    const code=inputs[0].value.trim().toUpperCase();
+    const creds=parseInt(inputs[1].value)||0;
+    if(code&&creds>0&&sel.value==='1') promos[code]=creds;
+  });
+  saveCfg({promoCodes:promos});
+  showStatus('promo');
+  showToast('Promo codes saved ✓','ok');
+}
+
+/* ══ GENERAL ══ */
+function loadGeneral(){
+  const cfg=getCfg();
+  document.getElementById('g-sitename').value=cfg.siteName||'Digiva';
+  document.getElementById('g-tagline').value=cfg.tagline||'';
+  document.getElementById('g-email').value=cfg.email||'';
+  document.getElementById('g-freecreds').value=cfg.freeCreds||3;
+  document.getElementById('g-herotitle').value=cfg.heroTitle||'Professional Datasheets';
+  document.getElementById('g-herosub').value=cfg.tagline||'';
+  document.getElementById('g-ctabtn').value=cfg.ctaBtn||'⚡ Generate Datasheet';
+  document.getElementById('g-footer').value=cfg.footerText||'© 2025 Digiva · AI Product Datasheets';
+}
+function saveSection(sec){
+  const cfg=getCfg();
+  if(sec==='general'){
+    saveCfg({siteName:document.getElementById('g-sitename').value,tagline:document.getElementById('g-tagline').value,email:document.getElementById('g-email').value,freeCreds:parseInt(document.getElementById('g-freecreds').value)||3});
+  } else if(sec==='hero'){
+    saveCfg({heroTitle:document.getElementById('g-herotitle').value,tagline:document.getElementById('g-herosub').value,ctaBtn:document.getElementById('g-ctabtn').value,footerText:document.getElementById('g-footer').value});
+  }
+  showStatus(sec);
+  showToast('Settings saved ✓','ok');
+}
+
+/* ══ PRICING ══ */
+function loadPricing(){
+  const cfg=getCfg();
+  const plans=cfg.plans||DEFAULT_CFG.plans;
+  document.getElementById('planEditor').innerHTML=plans.map((p,i)=>`
+    <div class="cfg-section" style="margin-bottom:16px">
+      <div class="cfg-section-title">Plan ${i+1} — ${p.name}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div class="inp-group"><label class="inp-label">Name</label><input class="inp" id="pl${i}-name" value="${p.name}"/></div>
+        <div class="inp-group"><label class="inp-label">Price ($)</label><input class="inp" id="pl${i}-price" type="number" value="${p.price}"/></div>
+        <div class="inp-group"><label class="inp-label">Credits</label><input class="inp" id="pl${i}-cred" type="number" value="${p.credits}"/></div>
+      </div>
+    </div>`).join('');
+  const links=cfg.planLinks||{};
+  document.getElementById('pay-s').value=links.starter||'';
+  document.getElementById('pay-p').value=links.pro||'';
+  document.getElementById('pay-b').value=links.business||'';
+}
+function savePayment(){
+  const cfg=getCfg();
+  const plans=(cfg.plans||DEFAULT_CFG.plans).map((p,i)=>({...p,name:document.getElementById('pl'+i+'-name')?.value||p.name,price:parseFloat(document.getElementById('pl'+i+'-price')?.value)||p.price,credits:parseInt(document.getElementById('pl'+i+'-cred')?.value)||p.credits}));
+  saveCfg({plans,planLinks:{starter:document.getElementById('pay-s').value,pro:document.getElementById('pay-p').value,business:document.getElementById('pay-b').value}});
+  showStatus('payment');
+  showToast('Payment settings saved ✓','ok');
+}
+
+/* ══ API KEYS ══ */
+function loadApiKeys(){
+  const cfg=getCfg();
+  document.getElementById('api-key-inp').value=cfg.apiKey||'';
+  document.getElementById('api-model').value=cfg.apiModel||'gpt-4o';
+}
+function toggleApiVis(){
+  const inp=document.getElementById('api-key-inp');
+  inp.type=inp.type==='password'?'text':'password';
+}
+function saveApiKey(){
+  const key=document.getElementById('api-key-inp').value.trim();
+  const model=document.getElementById('api-model').value;
+  if(key&&!key.startsWith('sk-')){showToast('Invalid key format','err');return;}
+  saveCfg({apiKey:key,apiModel:model});
+  showStatus('api');
+  showToast('API key saved ✓','ok');
+}
+
+/* ══ DESIGN ══ */
+const COLOR_FIELDS=[
+  {id:'clr-bg',lbl:'Background',key:'bgColor',def:'#060D1A'},
+  {id:'clr-bg2',lbl:'Card BG',key:'bg2Color',def:'#0A1628'},
+  {id:'clr-accent',lbl:'Accent Blue',key:'accentColor',def:'#2E9CFF'},
+  {id:'clr-gold',lbl:'Gold',key:'goldColor',def:'#F0B429'},
+  {id:'clr-text',lbl:'Text',key:'textColor',def:'#E8F4FF'},
+  {id:'clr-border',lbl:'Border',key:'borderColor',def:'#1A3A5C'},
+];
+function loadDesign(){
+  const cfg=getCfg();
+  document.getElementById('colorEditor').innerHTML=COLOR_FIELDS.map(f=>`
+    <div class="color-item">
+      <div class="color-lbl">${f.lbl}</div>
+      <div class="color-row">
+        <input type="color" class="color-pick" id="${f.id}-pick" value="${cfg[f.key]||f.def}" oninput="document.getElementById('${f.id}-hex').value=this.value"/>
+        <input type="text" class="color-hex" id="${f.id}-hex" value="${cfg[f.key]||f.def}" maxlength="7" oninput="document.getElementById('${f.id}-pick').value=this.value"/>
+      </div>
+    </div>`).join('');
+  const logo=cfg.logoB64;
+  if(logo){document.getElementById('logo-preview').style.display='block';document.getElementById('logo-img').src=logo;}
+  document.getElementById('bg-style').value=cfg.bgStyle||'dark';
+}
+function saveColors(){
+  const update={};
+  COLOR_FIELDS.forEach(f=>{update[f.key]=document.getElementById(f.id+'-hex').value;});
+  saveCfg(update);
+  showStatus('colors');
+  showToast('Colors saved — will apply on next page load ✓','ok');
+}
+function handleLogoUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    saveCfg({logoB64:ev.target.result});
+    document.getElementById('logo-preview').style.display='block';
+    document.getElementById('logo-img').src=ev.target.result;
+    document.getElementById('logo-drop').textContent='✅ '+file.name;
+    showToast('Logo saved ✓','ok');
+  };
+  r.readAsDataURL(file);
+}
+function saveBranding(){
+  saveCfg({bgStyle:document.getElementById('bg-style').value});
+  showStatus('brand');
+  showToast('Branding saved ✓','ok');
+}
+
+/* ══ SOCIAL ══ */
+function loadSocial(){
+  const cfg=getCfg();
+  document.getElementById('s-li').value=cfg.socialLi||'';
+  document.getElementById('s-ig').value=cfg.socialIg||'';
+  document.getElementById('s-tt').value=cfg.socialTt||'';
+  document.getElementById('s-fb').value=cfg.socialFb||'';
+  document.getElementById('s-tw').value=cfg.socialTw||'';
+  document.getElementById('s-yt').value=cfg.socialYt||'';
+}
+function saveSocial(){
+  saveCfg({socialLi:document.getElementById('s-li').value,socialIg:document.getElementById('s-ig').value,socialTt:document.getElementById('s-tt').value,socialFb:document.getElementById('s-fb').value,socialTw:document.getElementById('s-tw').value,socialYt:document.getElementById('s-yt').value});
+  showStatus('social');
+  showToast('Social links saved ✓','ok');
+}
+
+/* ══ CONTENT ══ */
+function loadContent(){
+  const cfg=getCfg();
+  const fc=cfg.featureCards||[{icon:'📄',title:'A4 Portrait Format',desc:'Professional portrait layout.'},{icon:'🧠',title:'AI-Powered Research',desc:'GPT-4o writes accurate specs.'},{icon:'🖼️',title:'Product Images',desc:'Images embedded automatically.'},{icon:'🎨',title:'Custom Branding',desc:'Upload logo, pick colors.'},{icon:'🌍',title:'5 Languages',desc:'EN, FR, AR, ES, ZH supported.'},{icon:'📊',title:'Smart Tables',desc:'Auto-generated spec tables.'}];
+  document.getElementById('featCards').innerHTML=fc.map((c,i)=>`
+    <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
+      <input class="inp" style="width:50px" value="${c.icon}" id="fc${i}-icon"/>
+      <input class="inp" value="${c.title}" id="fc${i}-title"/>
+      <input class="inp" value="${c.desc}" id="fc${i}-desc"/>
+    </div>`).join('');
+  const plans=cfg.plans||DEFAULT_CFG.plans;
+  document.getElementById('planFeats').innerHTML=plans.map((p,i)=>`
+    <div style="margin-bottom:14px"><div style="font-size:12px;font-weight:700;color:var(--d5);margin-bottom:6px">${p.name}</div>${(p.feats||[]).map((f,j)=>`<input class="inp" style="margin-bottom:6px" value="${f}" id="pf${i}-${j}"/>`).join('')}</div>`).join('');
+}
+function saveContent(){
+  const cfg=getCfg();
+  const fc=(cfg.featureCards||new Array(6).fill({})).map((_,i)=>({icon:document.getElementById('fc'+i+'-icon')?.value||'',title:document.getElementById('fc'+i+'-title')?.value||'',desc:document.getElementById('fc'+i+'-desc')?.value||''}));
+  saveCfg({featureCards:fc});
+  showStatus('content');
+  showToast('Content saved ✓','ok');
+}
+
+/* ── Helpers ── */
+function showStatus(id){
+  const el=document.getElementById('status-'+id)||document.getElementById('st-'+id);
+  if(!el)return;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+// Init
+renderStats();
+</script>
+</body>
+</html>
