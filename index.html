@@ -800,17 +800,17 @@ function T(k){const lg=document.documentElement.getAttribute('data-lang')||'en';
       </div>
       <div class="footer-col">
         <h4>Product</h4>
-        <a onclick="go('gen')">Generator</a>
-        <a onclick="go('price')">Pricing</a>
-        <a onclick="go('dash')">Dashboard</a>
-        <a href="#">API Access</a>
+        <a onclick="go('gen')" style="cursor:pointer">Generator</a>
+        <a onclick="go('price')" style="cursor:pointer">Pricing</a>
+        <a href="dashboard.html">My Dashboard</a>
+        <a href="admin.html">Admin Panel</a>
       </div>
       <div class="footer-col">
         <h4>Company</h4>
-        <a href="#">About Digiva</a>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
-        <a href="#">Support</a>
+        <a href="about.html">About Digiva</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="support.html">Support & Donations</a>
         <a href="mailto:benzekri1khalil@gmail.com">benzekri1khalil@gmail.com</a>
       </div>
     </div>
@@ -827,8 +827,13 @@ function T(k){const lg=document.documentElement.getAttribute('data-lang')||'en';
 // Load API key from admin config or user's own saved key
 function getActiveApiKey(){
   try{
-    const cfg=JSON.parse(localStorage.getItem('dg_cfg')||'{}');
-    return cfg.apiKey||localStorage.getItem('dg_k')||'';
+    var userKey=localStorage.getItem('dg_k')||'';
+    if(userKey&&userKey.startsWith('sk-'))return userKey;
+    var cfg=JSON.parse(localStorage.getItem('dg_cfg')||'{}');
+    if(cfg.apiKey&&cfg.apiKey.startsWith('sk-'))return cfg.apiKey;
+    var inpEl=document.getElementById('apiInp');
+    if(inpEl&&inpEl.value&&inpEl.value.startsWith('sk-'))return inpEl.value.trim();
+    return '';
   }catch(e){return localStorage.getItem('dg_k')||'';}
 }
 const S={
@@ -921,12 +926,14 @@ function updateCredUI(){
 }
 
 /* ── API Key ── */
-function saveKey(fromDash=false){
-  const val=(fromDash?document.getElementById('dashKey'):document.getElementById('apiInp')).value.trim();
-  if(!val.startsWith('sk-')){toast('Key must start with sk-','err');return;}
+function saveKey(fromDash){
+  var val=(fromDash?document.getElementById('dashKey'):document.getElementById('apiInp'))?.value.trim()||'';
+  if(!val){toast('Please enter an API key','err');return;}
+  if(!val.startsWith('sk-')){toast('Key must start with sk-proj- or sk-','err');return;}
   S.apiKey=val;
-  document.getElementById('apiInp').value=val;
-  document.getElementById('dashKey').value=val;
+  var inp=document.getElementById('apiInp');if(inp)inp.value=val;
+  var dash=document.getElementById('dashKey');if(dash)dash.value=val;
+  localStorage.setItem('dg_k',val);
   save(); toast('API key saved ✓','ok');
 }
 
@@ -1842,17 +1849,19 @@ function applyAdminConfig(){
 
 // Override buy() to use admin-set payment links
 function buy(plan){
-  var links = S.planLinks||{};
-  var link = links[plan]||'';
-  if(link && link.startsWith('http')){
-    window.open(link,'_blank');
-    return;
-  }
-  // Demo mode if no link set
-  var packs={starter:10,pro:50,business:200};
-  S.credits+=packs[plan]||0;
-  updateCredUI(); save();
-  toast('Payment link not set yet — go to Admin → Payment Setup','err');
+  // Read payment links from admin config first
+  try{
+    var cfg=JSON.parse(localStorage.getItem('dg_cfg')||'{}');
+    var adminLinks=cfg.planLinks||{};
+    var link=adminLinks[plan]||'';
+    if(link&&link.startsWith('http')){window.open(link,'_blank');return;}
+  }catch(e){}
+  // Fallback to S.planLinks
+  var links=S.planLinks||{};
+  var link2=links[plan]||'';
+  if(link2&&link2.startsWith('http')){window.open(link2,'_blank');return;}
+  // No link set
+  toast('Payment link not configured yet. Contact benzekri1khalil@gmail.com','err');
 }
 
 // Close admin on overlay click

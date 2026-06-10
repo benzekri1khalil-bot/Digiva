@@ -6,304 +6,287 @@
 <link rel="stylesheet" href="digiva.css"/>
 <style>
 body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;position:relative;overflow:hidden}
-.bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
 .auth-wrap{position:relative;z-index:1;width:100%;max-width:440px}
-.auth-card{background:rgba(13,30,52,.92);border:1px solid var(--border);border-radius:20px;padding:40px 36px;backdrop-filter:blur(20px);box-shadow:0 24px 80px rgba(0,0,0,.6)}
-.auth-logo{text-align:center;margin-bottom:32px}
-.auth-logo-mark{width:56px;height:56px;background:var(--grad2);border-radius:16px;display:inline-flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff;box-shadow:0 8px 24px rgba(46,156,255,.4);margin-bottom:12px}
-.auth-logo-text{font-size:26px;font-weight:900;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.auth-sub{font-size:13px;color:var(--text3);margin-top:4px}
-.tab-row{display:flex;background:var(--bg2);border-radius:10px;padding:4px;margin-bottom:28px;gap:4px}
-.tab{flex:1;padding:9px;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:var(--text3)}
-.tab.on{background:var(--grad2);color:#fff;box-shadow:0 4px 12px rgba(46,156,255,.3)}
-.form-panel{display:none}.form-panel.on{display:block;animation:fadeUp .3s ease}
+.auth-card{background:rgba(13,30,52,.95);border:1px solid #1A3A5C;border-radius:20px;padding:40px 36px;backdrop-filter:blur(20px);box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.auth-logo{text-align:center;margin-bottom:28px}
+.auth-logo-mark{width:54px;height:54px;background:linear-gradient(135deg,#0E4D92,#2E9CFF);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff;box-shadow:0 8px 24px rgba(46,156,255,.4);margin-bottom:10px}
+.auth-name{font-size:26px;font-weight:900;background:linear-gradient(135deg,#1A6FD4,#2E9CFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.auth-sub{font-size:13px;color:#5C88B8;margin-top:3px}
+.tab-row{display:flex;background:#060D1A;border-radius:10px;padding:4px;margin-bottom:24px;gap:3px}
+.tab{flex:1;padding:9px;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:#5C88B8}
+.tab.on{background:linear-gradient(135deg,#0E4D92,#2E9CFF);color:#fff;box-shadow:0 4px 12px rgba(46,156,255,.3)}
+.panel{display:none}.panel.on{display:block;animation:fadeUp .3s ease}
 .inp-eye{position:relative}
-.inp-eye .inp{padding-right:42px}
-.inp-eye .eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;transition:color .2s}
-.inp-eye .eye-btn:hover{color:var(--d5)}
-.forgot-link{font-size:12px;color:var(--d5);cursor:pointer;float:right;margin-top:4px;transition:opacity .2s}
-.forgot-link:hover{opacity:.7}
-.auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text3);font-size:12px}
-.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.terms-note{font-size:11px;color:var(--text3);text-align:center;margin-top:16px;line-height:1.6}
-.terms-note a{color:var(--d5)}
-.verify-box{display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);border-radius:12px;padding:18px;text-align:center;margin-top:16px}
-.verify-box.show{display:block}
-.verify-icon{font-size:36px;margin-bottom:8px}
-.verify-title{font-size:16px;font-weight:700;color:var(--green);margin-bottom:4px}
-.verify-msg{font-size:13px;color:var(--text3)}
-.err-msg{font-size:13px;color:var(--red);margin-top:8px;min-height:18px;display:none}
-.err-msg.show{display:block}
-/* Admin secret hint */
-.admin-hint-box{margin-top:24px;padding:14px;background:rgba(46,156,255,.05);border:1px dashed rgba(46,156,255,.2);border-radius:10px;font-size:12px;color:var(--text3);text-align:center;line-height:1.7}
+.inp-eye .inp{padding-right:44px}
+.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#5C88B8;font-size:16px}
+.eye-btn:hover{color:#2E9CFF}
+.forgot{font-size:12px;color:#2E9CFF;cursor:pointer;float:right;margin-top:2px}
+.forgot:hover{opacity:.7}
+.err{font-size:13px;color:#EF4444;margin-top:8px;display:none;padding:8px 12px;background:rgba(239,68,68,.08);border-radius:8px;border-left:3px solid #EF4444}
+.err.on{display:block}
+.ok-box{font-size:13px;color:#22C55E;margin-top:8px;display:none;padding:10px 14px;background:rgba(34,197,94,.08);border-radius:8px;border-left:3px solid #22C55E}
+.ok-box.on{display:block}
+.terms{font-size:11px;color:#3A6A9A;text-align:center;margin-top:14px;line-height:1.6}
+.terms a{color:#2E9CFF}
+#adminExtra{display:none;margin-top:14px;padding:14px;background:rgba(240,180,41,.08);border:1px solid rgba(240,180,41,.25);border-radius:10px;animation:fadeUp .3s ease}
+.cursor-dot{position:fixed;pointer-events:none;z-index:99999;width:20px;height:20px;border-radius:50%;background:rgba(46,156,255,.15);border:1px solid rgba(46,156,255,.3);transform:translate(-50%,-50%);transition:left .05s,top .05s}
+/* reset panel */
+#resetStep2{display:none}
 </style>
 </head>
 <body>
-<canvas class="bg-canvas" id="bgCanvas"></canvas>
+<canvas id="bgCanvas"></canvas>
 <div id="toast-container"></div>
+<div class="cursor-dot" id="dot"></div>
 
 <div class="auth-wrap fade-up">
-  <div class="auth-card">
-    <div class="auth-logo">
-      <div class="auth-logo-mark">D</div>
-      <div class="auth-logo-text">Digiva</div>
-      <div class="auth-sub">AI Product Datasheet Generator</div>
-    </div>
-
-    <div class="tab-row">
-      <button class="tab on" id="tab-login" onclick="switchTab('login')">Sign In</button>
-      <button class="tab" id="tab-register" onclick="switchTab('register')">Create Account</button>
-    </div>
-
-    <!-- LOGIN -->
-    <div class="form-panel on" id="panel-login">
-      <div class="inp-group">
-        <label class="inp-label">Email Address</label>
-        <input class="inp" id="l-email" type="email" placeholder="your@email.com" autocomplete="email"/>
-      </div>
-      <div class="inp-group">
-        <label class="inp-label">
-          Password
-          <span class="forgot-link" onclick="switchTab('forgot')">Forgot password?</span>
-        </label>
-        <div class="inp-eye">
-          <input class="inp" id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
-          <button class="eye-btn" onclick="toggleEye('l-pass',this)">👁</button>
-        </div>
-      </div>
-      <div class="err-msg" id="l-err"></div>
-      <button class="btn btn-primary btn-full" onclick="doLogin()" style="margin-top:8px">Sign In →</button>
-      <div class="admin-hint-box">
-        🔐 <strong>Admin access:</strong> Use your admin email and password.<br/>
-        A hidden verification field will appear automatically.
-      </div>
-    </div>
-
-    <!-- REGISTER -->
-    <div class="form-panel" id="panel-register">
-      <div class="form-row">
-        <div class="inp-group">
-          <label class="inp-label">First Name</label>
-          <input class="inp" id="r-fname" type="text" placeholder="Khalil"/>
-        </div>
-        <div class="inp-group">
-          <label class="inp-label">Last Name</label>
-          <input class="inp" id="r-lname" type="text" placeholder="Benzekri"/>
-        </div>
-      </div>
-      <div class="inp-group">
-        <label class="inp-label">Email Address</label>
-        <input class="inp" id="r-email" type="email" placeholder="your@email.com"/>
-      </div>
-      <div class="inp-group">
-        <label class="inp-label">Password</label>
-        <div class="inp-eye">
-          <input class="inp" id="r-pass" type="password" placeholder="Min 8 characters"/>
-          <button class="eye-btn" onclick="toggleEye('r-pass',this)">👁</button>
-        </div>
-      </div>
-      <div class="inp-group">
-        <label class="inp-label">Confirm Password</label>
-        <input class="inp" id="r-pass2" type="password" placeholder="Repeat password" onkeydown="if(event.key==='Enter')doRegister()"/>
-      </div>
-      <div class="err-msg" id="r-err"></div>
-      <button class="btn btn-primary btn-full" onclick="doRegister()">Create Account →</button>
-      <div class="terms-note">By registering you agree to our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.</div>
-      <div class="verify-box" id="verify-box">
-        <div class="verify-icon">✅</div>
-        <div class="verify-title">Account Created!</div>
-        <div class="verify-msg">Welcome to Digiva. Click Sign In to access your account.</div>
-      </div>
-    </div>
-
-    <!-- FORGOT PASSWORD -->
-    <div class="form-panel" id="panel-forgot">
-      <div style="text-align:center;margin-bottom:20px">
-        <div style="font-size:36px;margin-bottom:8px">🔑</div>
-        <div style="font-size:16px;font-weight:700;color:var(--text)">Reset Password</div>
-        <div style="font-size:13px;color:var(--text3);margin-top:4px">Enter your email to receive reset instructions.</div>
-      </div>
-      <div class="inp-group">
-        <label class="inp-label">Email Address</label>
-        <input class="inp" id="f-email" type="email" placeholder="your@email.com"/>
-      </div>
-      <div class="err-msg" id="f-err"></div>
-      <button class="btn btn-primary btn-full" onclick="doForgot()">Send Reset Link →</button>
-      <div style="text-align:center;margin-top:16px">
-        <span style="font-size:13px;color:var(--text3)">Remember it? </span>
-        <span class="forgot-link" style="float:none" onclick="switchTab('login')">Back to Sign In</span>
-      </div>
-    </div>
-
-    <!-- ADMIN HIDDEN VERIFICATION -->
-    <div id="admin-extra" style="display:none;margin-top:16px;animation:fadeUp .3s ease">
-      <div style="background:rgba(240,180,41,.08);border:1px solid rgba(240,180,41,.3);border-radius:10px;padding:14px">
-        <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px">🔐 Admin Verification Required</div>
-        <input class="inp" id="admin-code" type="password" placeholder="Enter admin verification code" onkeydown="if(event.key==='Enter')doLogin()"/>
-      </div>
-    </div>
-
+ <div class="auth-card">
+  <div class="auth-logo">
+   <div class="auth-logo-mark">D</div>
+   <div class="auth-name">Digiva</div>
+   <div class="auth-sub">AI Product Datasheet Generator</div>
   </div>
+
+  <div class="tab-row">
+   <button class="tab on" id="tab-login" onclick="sw('login')">Sign In</button>
+   <button class="tab" id="tab-reg" onclick="sw('reg')">Register</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="panel on" id="panel-login">
+   <div class="inp-group">
+    <label class="inp-label">Email</label>
+    <input class="inp" id="l-email" type="email" placeholder="your@email.com" autocomplete="email"/>
+   </div>
+   <div class="inp-group">
+    <label class="inp-label">Password <span class="forgot" onclick="sw('forgot')">Forgot password?</span></label>
+    <div class="inp-eye">
+     <input class="inp" id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" oninput="checkAdminField()"/>
+     <button class="eye-btn" onclick="toggleEye('l-pass',this)">👁</button>
+    </div>
+   </div>
+   <div id="adminExtra">
+    <div style="font-size:12px;font-weight:700;color:#F0B429;margin-bottom:8px">🔐 Admin Verification</div>
+    <input class="inp" id="admin-code" type="password" placeholder="Enter admin code" onkeydown="if(event.key==='Enter')doLogin()"/>
+   </div>
+   <div class="err" id="l-err"></div>
+   <button class="btn btn-primary btn-full" style="margin-top:14px" onclick="doLogin()">Sign In →</button>
+  </div>
+
+  <!-- REGISTER -->
+  <div class="panel" id="panel-reg">
+   <div class="form-row">
+    <div class="inp-group"><label class="inp-label">First Name</label><input class="inp" id="r-fn" placeholder="Khalil"/></div>
+    <div class="inp-group"><label class="inp-label">Last Name</label><input class="inp" id="r-ln" placeholder="Benzekri"/></div>
+   </div>
+   <div class="inp-group"><label class="inp-label">Email</label><input class="inp" id="r-email" type="email" placeholder="your@email.com"/></div>
+   <div class="inp-group">
+    <label class="inp-label">Password</label>
+    <div class="inp-eye">
+     <input class="inp" id="r-pass" type="password" placeholder="Min 8 characters"/>
+     <button class="eye-btn" onclick="toggleEye('r-pass',this)">👁</button>
+    </div>
+   </div>
+   <div class="inp-group"><label class="inp-label">Confirm Password</label><input class="inp" id="r-pass2" type="password" placeholder="Repeat password" onkeydown="if(event.key==='Enter')doReg()"/></div>
+   <div class="err" id="r-err"></div>
+   <div class="ok-box" id="r-ok">✅ Account created! Signing you in...</div>
+   <button class="btn btn-primary btn-full" style="margin-top:14px" onclick="doReg()">Create Account →</button>
+   <div class="terms">By registering you agree to our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.</div>
+  </div>
+
+  <!-- FORGOT PASSWORD -->
+  <div class="panel" id="panel-forgot">
+   <div style="text-align:center;margin-bottom:20px">
+    <div style="font-size:38px;margin-bottom:8px">🔑</div>
+    <div style="font-size:16px;font-weight:700;color:#E8F4FF">Reset Password</div>
+    <div style="font-size:13px;color:#5C88B8;margin-top:4px">We will send a reset code to your email.</div>
+   </div>
+   <!-- Step 1: enter email -->
+   <div id="resetStep1">
+    <div class="inp-group"><label class="inp-label">Your Email</label><input class="inp" id="f-email" type="email" placeholder="your@email.com"/></div>
+    <div class="err" id="f-err"></div>
+    <div class="ok-box" id="f-ok">✅ Reset code sent! Check your email and enter the code below.</div>
+    <button class="btn btn-primary btn-full" style="margin-top:14px" onclick="doForgotStep1()">Send Reset Code →</button>
+   </div>
+   <!-- Step 2: enter code + new password -->
+   <div id="resetStep2">
+    <div class="inp-group"><label class="inp-label">Reset Code (from email)</label><input class="inp" id="f-token" placeholder="Enter code from email"/></div>
+    <div class="inp-group"><label class="inp-label">New Password</label><input class="inp" id="f-newpass" type="password" placeholder="Min 8 characters"/></div>
+    <div class="inp-group"><label class="inp-label">Confirm New Password</label><input class="inp" id="f-newpass2" type="password" onkeydown="if(event.key==='Enter')doForgotStep2()"/></div>
+    <div class="err" id="f-err2"></div>
+    <button class="btn btn-primary btn-full" onclick="doForgotStep2()">Reset Password →</button>
+   </div>
+   <div style="text-align:center;margin-top:16px">
+    <span style="font-size:13px;color:#5C88B8">Remember it? </span>
+    <span class="forgot" style="float:none" onclick="sw('login')">Back to Sign In</span>
+   </div>
+  </div>
+
+ </div>
 </div>
 
 <script src="digiva-core.js"></script>
 <script>
-// ── Admin credentials (secret) ──
-const ADMIN_EMAIL    = 'benzekri1khalil@gmail.com';
-const ADMIN_PASS     = '/khalil#brahim/';
-const ADMIN_CODE     = 'khattarasafiakhalilbenzekri@';
-const WORKER_PASS    = 'digiva-worker-2025'; // worker password
+// ── Admin secrets ──
+const ADMIN_EMAIL='benzekri1khalil@gmail.com';
+const ADMIN_PASS='/khalil#brahim/';
+const ADMIN_CODE='khattarasafiakhalilbenzekri@';
+const WORKER_PASS='digiva-worker-2025';
 
-let adminCodeVisible = false;
-
-// ── Background canvas animation ──
+// ── Background bubbles ──
 (function(){
-  const canvas = document.getElementById('bgCanvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, bubbles = [];
-  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
-  resize(); window.addEventListener('resize', resize);
-  for(let i=0;i<18;i++) bubbles.push({
-    x:Math.random()*1000, y:Math.random()*800,
-    r:20+Math.random()*80, vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4,
-    a:0.02+Math.random()*.06
-  });
+  const c=document.getElementById('bgCanvas'),ctx=c.getContext('2d');
+  let W,H,bs=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;}
+  resize();addEventListener('resize',resize);
+  for(let i=0;i<20;i++)bs.push({x:Math.random()*1200,y:Math.random()*800,r:15+Math.random()*70,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,a:.03+Math.random()*.07});
   function draw(){
     ctx.clearRect(0,0,W,H);
-    bubbles.forEach(b=>{
-      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(46,156,255,${b.a})`; ctx.fill();
-      b.x+=b.vx; b.y+=b.vy;
-      if(b.x<-b.r) b.x=W+b.r;
-      if(b.x>W+b.r) b.x=-b.r;
-      if(b.y<-b.r) b.y=H+b.r;
-      if(b.y>H+b.r) b.y=-b.r;
+    bs.forEach(b=>{
+      ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(46,156,255,${b.a})`;ctx.fill();
+      b.x+=b.vx;b.y+=b.vy;
+      if(b.x<-b.r)b.x=W+b.r;if(b.x>W+b.r)b.x=-b.r;
+      if(b.y<-b.r)b.y=H+b.r;if(b.y>H+b.r)b.y=-b.r;
     });
     requestAnimationFrame(draw);
   }
   draw();
 })();
 
-// ── Mouse bubble ──
-const cursor = document.createElement('div');
-cursor.style.cssText='position:fixed;width:24px;height:24px;border-radius:50%;background:rgba(46,156,255,.25);border:1.5px solid rgba(46,156,255,.5);pointer-events:none;z-index:99998;transition:transform .15s;transform:translate(-50%,-50%)';
-document.body.appendChild(cursor);
-document.addEventListener('mousemove', e=>{ cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px'; });
+// ── Cursor shadow (soft, not a bubble) ──
+const dot=document.getElementById('dot');
+document.addEventListener('mousemove',e=>{dot.style.left=e.clientX+'px';dot.style.top=e.clientY+'px';});
 
-function switchTab(tab) {
-  ['login','register','forgot'].forEach(t => {
+// ── Tab switcher ──
+function sw(tab){
+  ['login','reg','forgot'].forEach(t=>{
     document.getElementById('tab-'+t)?.classList.remove('on');
     document.getElementById('panel-'+t)?.classList.remove('on');
   });
   document.getElementById('tab-login')?.classList.remove('on');
-  document.getElementById('tab-register')?.classList.remove('on');
-  if(tab==='login'||tab==='forgot') document.getElementById('tab-login')?.classList.add('on');
+  document.getElementById('tab-reg')?.classList.remove('on');
+  if(tab==='login'||tab==='forgot')document.getElementById('tab-login')?.classList.add('on');
   else document.getElementById('tab-'+tab)?.classList.add('on');
   document.getElementById('panel-'+tab)?.classList.add('on');
-  document.getElementById('admin-extra').style.display='none';
+  document.getElementById('adminExtra').style.display='none';
 }
 
-function toggleEye(id, btn) {
-  const inp = document.getElementById(id);
-  if(inp.type==='password'){ inp.type='text'; btn.textContent='🙈'; }
-  else { inp.type='password'; btn.textContent='👁'; }
+function toggleEye(id,btn){
+  const inp=document.getElementById(id);
+  inp.type=inp.type==='password'?'text':'password';
+  btn.textContent=inp.type==='password'?'👁':'🙈';
 }
 
-// Show admin verification box when admin email + password is typed
-document.getElementById('l-pass').addEventListener('input', function(){
-  const email = document.getElementById('l-email').value.trim();
-  const pass  = this.value;
-  const isAdmin = (email===ADMIN_EMAIL && pass===ADMIN_PASS);
-  document.getElementById('admin-extra').style.display = isAdmin ? 'block' : 'none';
-});
+// Show admin verification when admin email+pass entered
+function checkAdminField(){
+  const email=document.getElementById('l-email').value.trim();
+  const pass=document.getElementById('l-pass').value;
+  document.getElementById('adminExtra').style.display=(email===ADMIN_EMAIL&&pass===ADMIN_PASS)?'block':'none';
+}
 
-function doLogin() {
-  const email = document.getElementById('l-email').value.trim();
-  const pass  = document.getElementById('l-pass').value;
-  const errEl = document.getElementById('l-err');
-  errEl.classList.remove('show');
+// ── LOGIN ──
+function doLogin(){
+  const email=document.getElementById('l-email').value.trim();
+  const pass=document.getElementById('l-pass').value;
+  const errEl=document.getElementById('l-err');
+  errEl.classList.remove('on');
 
   // Admin login
-  if(email===ADMIN_EMAIL && pass===ADMIN_PASS) {
-    const code = document.getElementById('admin-code').value.trim();
-    if(code !== ADMIN_CODE) {
-      errEl.textContent = '🔐 Admin verification code incorrect.';
-      errEl.classList.add('show');
-      return;
-    }
-    // Create admin user if not exists
-    let users = getUsers();
-    let admin = users.find(u=>u.email===ADMIN_EMAIL);
-    if(!admin) {
-      admin = { id:'admin_khalil', name:'Khalil Benzekri', email:ADMIN_EMAIL, passwordHash:simpleHash(pass), role:'admin', credits:9999, createdAt:new Date().toISOString(), verified:true, history:[] };
-      users.unshift(admin);
-      saveUsers(users);
-    } else {
-      admin.role = 'admin';
-      saveUsers(users);
-    }
-    sessionStorage.setItem('dg_session', JSON.stringify({id:admin.id, role:'admin'}));
-    showToast('Welcome back, Khalil! 👋','ok');
-    setTimeout(()=>window.location.href='admin.html', 800);
+  if(email===ADMIN_EMAIL&&pass===ADMIN_PASS){
+    const code=document.getElementById('admin-code').value.trim();
+    if(code!==ADMIN_CODE){errEl.textContent='🔐 Wrong admin verification code.';errEl.classList.add('on');return;}
+    let users=getUsers();
+    let admin=users.find(u=>u.email===ADMIN_EMAIL);
+    if(!admin){
+      admin={id:'admin_khalil',name:'Khalil Benzekri',email:ADMIN_EMAIL,passwordHash:simpleHash(pass),role:'admin',credits:9999,createdAt:new Date().toISOString(),verified:true,history:[]};
+      users.unshift(admin);saveUsers(users);
+    }else{admin.role='admin';saveUsers(users);}
+    sessionStorage.setItem('dg_session',JSON.stringify({id:admin.id,role:'admin'}));
+    showToast('Welcome back Khalil! 👋','ok');
+    setTimeout(()=>window.location.href='admin.html',700);
     return;
   }
 
   // Worker login
-  if(pass===WORKER_PASS) {
-    let users = getUsers();
-    let worker = users.find(u=>u.email===email && u.role==='worker');
-    if(worker) {
-      sessionStorage.setItem('dg_session', JSON.stringify({id:worker.id, role:'worker'}));
-      showToast('Welcome, '+worker.name+'!','ok');
-      setTimeout(()=>window.location.href='worker.html', 800);
+  if(pass===WORKER_PASS){
+    const users=getUsers();
+    const worker=users.find(u=>u.email===email&&u.role==='worker');
+    if(worker){
+      sessionStorage.setItem('dg_session',JSON.stringify({id:worker.id,role:'worker'}));
+      showToast('Welcome '+worker.name+'!','ok');
+      setTimeout(()=>window.location.href='worker.html',700);
       return;
     }
   }
 
-  // Regular user login
-  const result = loginUser(email, pass);
-  if(!result.ok) { errEl.textContent=result.msg; errEl.classList.add('show'); return; }
-  showToast('Welcome back, '+result.user.name+'! 👋','ok');
-  setTimeout(()=>window.location.href='dashboard.html', 800);
+  // Regular user
+  const result=loginUser(email,pass);
+  if(!result.ok){errEl.textContent=result.msg;errEl.classList.add('on');return;}
+  showToast('Welcome back '+result.user.name+'! 👋','ok');
+  setTimeout(()=>window.location.href='dashboard.html',700);
 }
 
-function doRegister() {
-  const fname = document.getElementById('r-fname').value.trim();
-  const lname = document.getElementById('r-lname').value.trim();
-  const email = document.getElementById('r-email').value.trim();
-  const pass  = document.getElementById('r-pass').value;
-  const pass2 = document.getElementById('r-pass2').value;
-  const errEl = document.getElementById('r-err');
-  errEl.classList.remove('show');
-
-  if(!fname||!email||!pass){ errEl.textContent='Please fill in all fields.'; errEl.classList.add('show'); return; }
-  if(pass.length<8){ errEl.textContent='Password must be at least 8 characters.'; errEl.classList.add('show'); return; }
-  if(pass!==pass2){ errEl.textContent='Passwords do not match.'; errEl.classList.add('show'); return; }
-
-  const result = registerUser(fname+' '+lname, email, pass);
-  if(!result.ok){ errEl.textContent=result.msg; errEl.classList.add('show'); return; }
-
-  document.getElementById('verify-box').classList.add('show');
-  showToast('Account created! You can now sign in.','ok');
-  setTimeout(()=>switchTab('login'), 2500);
+// ── REGISTER ──
+function doReg(){
+  const fn=document.getElementById('r-fn').value.trim();
+  const ln=document.getElementById('r-ln').value.trim();
+  const email=document.getElementById('r-email').value.trim();
+  const pass=document.getElementById('r-pass').value;
+  const pass2=document.getElementById('r-pass2').value;
+  const errEl=document.getElementById('r-err');
+  errEl.classList.remove('on');
+  if(!fn||!email||!pass){errEl.textContent='Please fill all fields.';errEl.classList.add('on');return;}
+  if(pass.length<8){errEl.textContent='Password must be at least 8 characters.';errEl.classList.add('on');return;}
+  if(pass!==pass2){errEl.textContent='Passwords do not match.';errEl.classList.add('on');return;}
+  const r=registerUser(fn+' '+ln,email,pass);
+  if(!r.ok){errEl.textContent=r.msg;errEl.classList.add('on');return;}
+  document.getElementById('r-ok').classList.add('on');
+  showToast('Account created! Signing you in...','ok');
+  // Auto login
+  loginUser(email,pass);
+  setTimeout(()=>window.location.href='dashboard.html',1500);
 }
 
-function doForgot() {
-  const email = document.getElementById('f-email').value.trim();
-  const errEl = document.getElementById('f-err');
-  errEl.classList.remove('show');
-  if(!email){ errEl.textContent='Please enter your email.'; errEl.classList.add('show'); return; }
-  const users = getUsers();
-  if(!users.find(u=>u.email===email)){ errEl.textContent='No account found with this email.'; errEl.classList.add('show'); return; }
-  showToast('Password reset instructions sent to '+email,'ok');
-  setTimeout(()=>switchTab('login'), 2000);
+// ── FORGOT PASSWORD ──
+let resetEmail='';
+function doForgotStep1(){
+  const email=document.getElementById('f-email').value.trim();
+  const errEl=document.getElementById('f-err');
+  errEl.classList.remove('on');
+  if(!email){errEl.textContent='Enter your email.';errEl.classList.add('on');return;}
+  const result=sendPasswordReset(email);
+  if(!result.ok){errEl.textContent=result.msg;errEl.classList.add('on');return;}
+  resetEmail=email;
+  document.getElementById('f-ok').classList.add('on');
+  // Show step 2 after 1 second
+  setTimeout(()=>{
+    document.getElementById('resetStep2').style.display='block';
+    document.getElementById('resetStep1').style.opacity='.5';
+  },1000);
+  showToast('Reset code sent to '+email,'ok');
 }
 
-// If already logged in redirect
-if(currentUser()) {
-  const role = currentRole();
-  if(role==='admin') window.location.href='admin.html';
-  else window.location.href='dashboard.html';
+function doForgotStep2(){
+  const token=document.getElementById('f-token').value.trim();
+  const pass=document.getElementById('f-newpass').value;
+  const pass2=document.getElementById('f-newpass2').value;
+  const errEl=document.getElementById('f-err2');
+  errEl.classList.remove('on');
+  if(!token||!pass){errEl.textContent='Enter the code and new password.';errEl.classList.add('on');return;}
+  if(pass.length<8){errEl.textContent='Password must be at least 8 characters.';errEl.classList.add('on');return;}
+  if(pass!==pass2){errEl.textContent='Passwords do not match.';errEl.classList.add('on');return;}
+  const r=resetPassword(resetEmail,token,pass);
+  if(!r.ok){errEl.textContent=r.msg;errEl.classList.add('on');return;}
+  showToast('Password reset! You can now sign in.','ok');
+  setTimeout(()=>sw('login'),1500);
+}
+
+// Redirect if already logged in
+if(currentUser()){
+  const role=currentRole();
+  window.location.href=role==='admin'?'admin.html':'dashboard.html';
 }
 </script>
 </body>
