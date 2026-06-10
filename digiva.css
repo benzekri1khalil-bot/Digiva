@@ -1,0 +1,98 @@
+/* ═══════════════════════════════════════════════════
+   DIGIVA SHARED STYLES
+═══════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --d1:#060D1A; --d2:#0A1628; --d3:#0E4D92; --d4:#1A6FD4; --d5:#2E9CFF; --d6:#72C1FF;
+  --gold:#F0B429; --green:#22C55E; --red:#EF4444;
+  --bg:#060D1A; --bg2:#0A1628; --bg3:#0D1E34; --bg4:#112240;
+  --text:#E8F4FF; --text2:#9EC5F0; --text3:#5C88B8;
+  --border:#1A3A5C; --card:#0D1E34;
+  --grad:linear-gradient(135deg,#060D1A 0%,#0E4D92 50%,#2E9CFF 100%);
+  --grad2:linear-gradient(135deg,#0E4D92,#2E9CFF);
+  --shadow:0 8px 32px rgba(0,0,0,.5);
+  --radius:12px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--d4);border-radius:3px}
+
+/* ── Layout ── */
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.page-wrap{min-height:100vh;display:flex;flex-direction:column}
+
+/* ── Cards ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.card-sm{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+
+/* ── Inputs ── */
+.inp{width:100%;padding:11px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:var(--bg2);color:var(--text);outline:none;transition:border-color .2s}
+.inp:focus{border-color:var(--d5);box-shadow:0 0 0 3px rgba(46,156,255,.12)}
+.inp::placeholder{color:var(--text3)}
+.inp-label{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:block}
+.inp-group{margin-bottom:18px}
+
+/* ── Buttons ── */
+.btn{padding:11px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--grad2);color:#fff;box-shadow:0 4px 14px rgba(46,156,255,.3)}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text2);border:1px solid var(--border)!important}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.btn-danger{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.3)!important}
+.btn-danger:hover{background:rgba(239,68,68,.22)}
+.btn-sm{padding:7px 14px;font-size:12px;border-radius:8px}
+.btn-full{width:100%;justify-content:center}
+
+/* ── Badges ── */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.badge-blue{background:rgba(46,156,255,.15);color:var(--d5)}
+.badge-green{background:rgba(34,197,94,.12);color:var(--green)}
+.badge-red{background:rgba(239,68,68,.12);color:var(--red)}
+.badge-gold{background:rgba(240,180,41,.12);color:var(--gold)}
+
+/* ── Tables ── */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);border-bottom:2px solid var(--border);background:var(--bg2)}
+.data-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+.data-table tr:hover td{background:rgba(255,255,255,.02)}
+
+/* ── Nav shared ── */
+.site-nav{background:rgba(6,13,26,.9);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.site-nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:8px;height:64px;padding:0 24px}
+.site-logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto}
+.site-logo-mark{width:36px;height:36px;background:var(--grad2);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:#fff;box-shadow:0 4px 14px rgba(46,156,255,.3)}
+.site-logo-text{font-size:19px;font-weight:800;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.site-nav-link{color:var(--text2);font-size:14px;font-weight:500;padding:6px 14px;border-radius:8px;border:none;background:none;cursor:pointer;text-decoration:none;transition:all .2s}
+.site-nav-link:hover,.site-nav-link.active{color:var(--d5);background:rgba(46,156,255,.1)}
+
+/* ── Forms ── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+
+/* ── Section headings ── */
+.sec-eye{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--d5);margin-bottom:6px}
+.sec-h{font-size:clamp(24px,3.5vw,38px);font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1.15;margin-bottom:8px}
+.sec-sub{font-size:15px;color:var(--text3);margin-bottom:40px;line-height:1.7}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,156,255,.4)}50%{box-shadow:0 0 0 8px rgba(46,156,255,0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-up{animation:fadeUp .35s ease}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .form-row{grid-template-columns:1fr}
+  .container{padding:0 16px}
+}
+
+/* ── Toast container ── */
+#toast-container{position:fixed;bottom:24px;right:24px;z-index:99999;display:flex;flex-direction:column;gap:8px}

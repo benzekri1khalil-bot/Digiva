@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Digiva Worker Panel</title>
+<link rel="stylesheet" href="digiva.css"/>
+</head>
+<body style="padding:32px">
+<div id="toast-container"></div>
+<div style="max-width:800px;margin:0 auto">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:36px;height:36px;background:var(--grad2);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:#fff">D</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:var(--text)">Digiva Worker Panel</div>
+        <div id="worker-name" style="font-size:12px;color:var(--text3)"></div>
+      </div>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="logout()">Sign Out</button>
+  </div>
+  <div class="card">
+    <div style="font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      💬 Messages
+      <span class="badge badge-blue" id="unread-count">0 unread</span>
+    </div>
+    <div id="msg-list"></div>
+  </div>
+</div>
+<script src="digiva-core.js"></script>
+<script>
+requireAdmin();
+const user = currentUser();
+if(user) document.getElementById('worker-name').textContent = user.name + ' — Worker';
+const msgs = getMessages();
+document.getElementById('unread-count').textContent = msgs.filter(m=>!m.read).length + ' unread';
+document.getElementById('msg-list').innerHTML = msgs.length ? msgs.map(m=>`
+  <div style="background:var(--bg2);border:1px solid ${m.read?'var(--border)':'var(--d5)'};border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer" onclick="markRead('${m.id}');this.style.borderColor='var(--border)'">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <div style="font-size:13px;font-weight:700">${m.from||'Anonymous'}</div>
+      <div style="font-size:11px;color:var(--text3)">${m.email||''}</div>
+      ${!m.read?'<span class="badge badge-blue">NEW</span>':''}
+      <div style="font-size:11px;color:var(--text3);margin-left:auto">${new Date(m.time).toLocaleString()}</div>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:4px">${m.subject||''}</div>
+    <div style="font-size:12px;color:var(--text3)">${m.body||''}</div>
+  </div>`).join('') : '<div style="text-align:center;padding:40px;color:var(--text3)">No messages yet</div>';
+</script>
+</body>
+</html>
